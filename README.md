@@ -1,45 +1,116 @@
 # GOD CONFIQS
 
-An independent VLESS configuration and customer-management platform.
+**GOD CONFIQS** is an independent VLESS panel and customer-management project built around Cloudflare Workers and D1. Its installer is designed to create a separate Worker and database in each customer's own Cloudflare account.
 
-## Links
+## Quick access
 
-- **Automatic installer:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/install
-- **Customer portal:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal
-- **Source repository:** https://github.com/somet8611-ux/God-Confiqs
+| Page | Link |
+|---|---|
+| Automatic installer | [Open Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install) |
+| Customer portal | [Open Customer Portal](https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal) |
+| Source code | [GitHub repository](https://github.com/somet8611-ux/God-Confiqs) |
+
+## Screenshots
+
+The images below are live page captures. Open the links above if the page has changed since the screenshot was generated.
+
+### Automatic installer
+
+![GOD CONFIQS installer page](https://image.thum.io/get/width/1200/crop/900/noanimate/https://god-confiqs-fixed.zeus-n73k47.workers.dev/install)
+
+### Customer portal
+
+![GOD CONFIQS customer portal](https://image.thum.io/get/width/1200/crop/900/noanimate/https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal)
+
+## What the installer does
+
+The installer provisions a customer's panel inside the Cloudflare account selected by that customer. It is intended to create:
+
+- A dedicated Cloudflare Worker for the customer.
+- A separate Cloudflare D1 database for that Worker.
+- A customer-specific `workers.dev` address to open the panel.
+
+The customer does not need to create database tables or upload Worker code manually. The installer performs those provisioning steps after the Cloudflare token is verified and the account is selected.
 
 ## Install your own panel
 
-GOD CONFIQS is designed to create a separate Worker and D1 database in your own Cloudflare account.
+### 1. Open the installer
 
-1. Open the [GOD CONFIQS Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install).
-2. Click **Create pre-configured token**. Cloudflare opens the API Token page with the required permissions preselected.
-3. Sign in to Cloudflare if requested. Review the requested permissions and account scope, then create the token.
-4. Copy the token and return to the installer.
-5. Paste the token and click **Verify token & load accounts**.
-6. Select the Cloudflare account where you want your panel.
-7. Click **Create my dedicated panel** and wait for setup to finish.
-8. Save your new panel URL. Your Worker and database are created in the selected Cloudflare account.
+Go to the [GOD CONFIQS Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install).
 
-### Required Cloudflare permissions
+### 2. Create a pre-configured Cloudflare API token
 
-The installer requests:
+Click **Create pre-configured token**. Cloudflare opens its API Token page with the permissions requested by the installer already filled in.
 
-- **Workers Scripts — Edit**
-- **D1 — Edit**
-- **Memberships — Read**
+Sign in if Cloudflare asks you to. Review the permissions and account scope, then create the token. Cloudflare displays the token after creation.
 
-If your Cloudflare login has access to multiple accounts, make sure the token is scoped to the account where you want the panel created. Cloudflare may ask you to enable a `workers.dev` subdomain before publishing your Worker.
+### 3. Copy and verify the token
 
-### Keep your token safe
+Copy the token from Cloudflare, return to the installer, and paste it into the token field. Click **Verify token & load accounts**.
 
-- Never share your API token with anyone or publish it.
-- Do not paste your token into GitHub, public messages, or support chats.
-- The installer uses the token to perform setup; it is not intended to be stored as your panel credential.
-- Once installation is complete, revoke the temporary token in Cloudflare if you no longer need it.
+The installer checks that the token is active and retrieves the Cloudflare accounts it can access. If you have access to multiple accounts, make sure you choose the correct one.
+
+### 4. Create your panel
+
+Choose the Cloudflare account where you want the panel, then click **Create my dedicated panel**.
+
+The installer creates a D1 database, initializes its tables, uploads the customer Worker, and enables its `workers.dev` address. Wait for the success message rather than closing the page during setup.
+
+### 5. Save your panel address
+
+When installation finishes, copy the panel URL shown on the result screen and keep it somewhere safe. Open that URL to access your dedicated panel and complete its initial setup.
+
+## Cloudflare token permissions
+
+The pre-configured token requests these permissions:
+
+| Permission | Why it is needed |
+|---|---|
+| Workers Scripts — Edit | Upload and manage the dedicated customer Worker |
+| D1 — Edit | Create and initialize the customer's database |
+| Memberships — Read | Read the Cloudflare account memberships available to the token |
+
+If your Cloudflare login has access to several accounts, restrict the token to the intended account where possible and select that same account in the installer. Cloudflare may require you to enable a `workers.dev` subdomain before it can publish the new Worker.
+
+## Security recommendations
+
+- Treat the API token like a password. Do not share it with anyone.
+- Never paste the token into GitHub, public messages, screenshots, or support chats.
+- Use the token only for the installation process.
+- After installation, revoke the temporary token in Cloudflare if you no longer need it.
+- Keep your panel login details private.
+
+The installer uses the submitted token to make the provisioning requests. It is not intended to become a stored customer credential.
+
+## Troubleshooting
+
+**Cloudflare says the token is invalid or inactive**
+- Create a new token from the installer's pre-configured token link.
+- Check that the token was copied completely and has not expired or been revoked.
+- Confirm that the requested permissions are present.
+
+**No Cloudflare account appears**
+- Confirm that the Cloudflare user has access to an account.
+- Check that the token's account scope includes the account you want to use.
+- Create a replacement token with the correct account scope if necessary.
+
+**The Worker address cannot be enabled**
+- Open the Cloudflare dashboard for the selected account.
+- Enable or configure the account's `workers.dev` subdomain, then retry installation.
+
+**Installation fails**
+- Read the error shown by the installer.
+- Verify the token permissions and selected account.
+- Do not share your token when asking for help; share only the error message with the token removed.
 
 ## Project files
 
-- `worker.js` — application and installer source.
-- `customer-worker-template.js` — source used to create each customer's separate Worker.
-- `wrangler.toml` — deployment configuration.
+- `worker.js` — main application, installer interface, and provisioning API.
+- `customer-worker-template.js` — standalone Worker template deployed for each customer.
+- `wrangler.toml` — configuration for the main application deployment.
+
+## Important
+
+Each customer installation is intended to have its own Worker and D1 database in the customer's selected Cloudflare account. A customer's panel resources are separate from the main GOD CONFIQS application resources.
+
+The installer and customer provisioning flow should be tested with a controlled Cloudflare account before being offered as a public production service.
