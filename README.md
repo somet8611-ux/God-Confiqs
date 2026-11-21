@@ -118,3 +118,11 @@ The installer uses the submitted token to make the provisioning requests. It is 
 Each customer installation is intended to have its own Worker and D1 database in the customer's selected Cloudflare account. A customer's panel resources are separate from the main GOD CONFIQS application resources.
 
 The installer and customer provisioning flow should be tested with a controlled Cloudflare account before being offered as a public production service.
+
+## Contact
+
+📩 For collaboration opportunities and further information, please contact the creator: @itsmamadhasan
+
+📢 Join our official Telegram channel for updates and announcements: ⬇️
+
+https://t.me/thegodconfigs
