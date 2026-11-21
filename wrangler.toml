@@ -1,0 +1,31 @@
+name = "god-confiqs-fixed"
+main = "worker.js"
+compatibility_date = "2026-11-19"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[d1_databases]]
+binding = "PANEL_AUTH_DB"
+database_name = "vless-admin-db"
+database_id = "68c2a282-a19e-4a99-b58a-3492599dc569"
+
+[[services]]
+binding = "PANEL_BACKEND"
+service = "vless-admin-panel"
+
+[[d1_databases]]
+binding = "PANEL_DB"
+database_name = "zeus-db-mfkzr8"
+database_id = "ebd3e009-be5e-4ce8-8ce7-0ad29c5ab514"
+
+[[d1_databases]]
+binding = "RECOVERY_DB"
+database_name = "god-confiqs-recovery"
+database_id = "a5848d32-f495-4a66-bb23-2035cbe765af"
+
+[[d1_databases]]
+binding = "TENANTS_DB"
+database_name = "god-confiqs-tenants"
+database_id = "99dd8687-6691-4bfe-9b60-5e45d4717348"

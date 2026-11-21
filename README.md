@@ -4,19 +4,15 @@ Independent VLESS configuration and customer-management platform built on Cloudf
 
 ## Project layout
 - `worker.js` — current deployed Worker source: admin UI, customer portal, owner accounts UI, and API routes.
+- `wrangler.toml` — Worker identity and existing production resource bindings for reproducible deployment.
 - `README.md` — project overview.
 - `.gitignore` — local-only files and secrets excluded from version control.
 
 ## Deployment
-The production Worker is named `god-confiqs-fixed`. Configure production bindings and secrets in Cloudflare separately. Never commit API tokens, passwords, private keys, database credentials, or local `.env` files.
+The production Worker is named `god-confiqs-fixed`. Cloudflare Workers Builds can deploy this repository on pushes to `main`.
 
-Required bindings currently used:
-- `PANEL_AUTH_DB`
-- `PANEL_BACKEND` (service binding to the existing `vless-admin-panel`)
-- `PANEL_DB`
-- `RECOVERY_DB`
-- `TENANTS_DB`
+Configure production secrets in Cloudflare separately. Never commit API tokens, passwords, private keys, database credentials, or local `.env` files.
 
-Keep `vless-admin-panel` unchanged. This repository contains only the GOD CONFIQS Worker source.
+The Wrangler configuration preserves the existing bindings, including the service binding to `vless-admin-panel`. Keep that separate Worker unchanged.
 
-Changes committed here do not automatically deploy to Cloudflare; a deployment workflow must be configured and tested separately.
+Changes committed here do not deploy until the repository is connected under the Worker Settings → Builds in Cloudflare. After connecting, verify the first build and runtime behavior before relying on automatic deployment.
