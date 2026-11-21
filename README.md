@@ -32,6 +32,10 @@ The installer provisions a customer's panel inside the Cloudflare account select
 
 The customer does not need to create database tables or upload Worker code manually. The installer performs those provisioning steps after the Cloudflare token is verified and the account is selected.
 
+## VLESS server requirement
+
+The installer creates the customer's dashboard Worker and D1 database; it does **not** create a VPS, deploy Xray/V2Ray/sing-box, or change an existing VLESS server. The customer must already have a compatible VLESS server and add each generated UUID to that server's inbound configuration before the connection can work. The current customer template generates VLESS-over-WebSocket connection links with TLS enabled or disabled; it is not yet a universal subscription manager or a server-side provisioning system.
+
 ## Install your own panel
 
 ### 1. Open the installer
