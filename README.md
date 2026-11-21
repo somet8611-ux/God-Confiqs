@@ -4,7 +4,6 @@ Independent VLESS configuration and customer-management platform built on Cloudf
 
 ## Live links
 
-- **Main website:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/
 - **Automatic customer installer:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/install
 - **Customer portal:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal
 - **GitHub repository:** https://github.com/somet8611-ux/God-Confiqs
