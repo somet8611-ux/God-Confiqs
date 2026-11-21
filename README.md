@@ -1,54 +1,45 @@
 # GOD CONFIQS
 
-Independent VLESS configuration and customer-management platform built on Cloudflare Workers.
+An independent VLESS configuration and customer-management platform.
 
-## Live links
+## Links
 
-- **Automatic customer installer:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/install
+- **Automatic installer:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/install
 - **Customer portal:** https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal
-- **GitHub repository:** https://github.com/somet8611-ux/God-Confiqs
+- **Source repository:** https://github.com/somet8611-ux/God-Confiqs
 
-## Customer installation (automatic)
+## Install your own panel
 
-Each customer creates their own Worker and D1 database in their own Cloudflare account:
+GOD CONFIQS is designed to create a separate Worker and D1 database in your own Cloudflare account.
 
 1. Open the [GOD CONFIQS Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install).
-2. Select **Create pre-configured token**. Cloudflare opens the API Token form with the required permissions preselected.
-3. Sign in to Cloudflare if requested, review the permissions and account scope, then create the token.
-4. Copy the token from Cloudflare and return to the Installer. Paste it into the token field.
-5. Select **Verify token & load accounts**.
-6. Choose the Cloudflare account where the panel should be created.
-7. Select **Create my dedicated panel**. The installer creates a dedicated D1 database, uploads a separate customer Worker, and enables its `workers.dev` address.
-8. Save the resulting panel URL. It belongs to the customer's Cloudflare account.
+2. Click **Create pre-configured token**. Cloudflare opens the API Token page with the required permissions preselected.
+3. Sign in to Cloudflare if requested. Review the requested permissions and account scope, then create the token.
+4. Copy the token and return to the installer.
+5. Paste the token and click **Verify token & load accounts**.
+6. Select the Cloudflare account where you want your panel.
+7. Click **Create my dedicated panel** and wait for setup to finish.
+8. Save your new panel URL. Your Worker and database are created in the selected Cloudflare account.
 
-The installer requests these token permissions: **Workers Scripts: Edit**, **D1: Edit**, and **Memberships: Read**. If the Cloudflare user can access multiple accounts, select or restrict the token to the intended account. Cloudflare may require the customer to enable a `workers.dev` subdomain before the Worker can be published.
+### Required Cloudflare permissions
 
-**Token safety:** Never send an API token to anyone or commit it to GitHub. The installer uses the submitted token for the provisioning request and does not intentionally save it as a customer setting. Revoke the token in Cloudflare after installation if it is no longer needed.
+The installer requests:
 
-## Owner / developer deployment
+- **Workers Scripts — Edit**
+- **D1 — Edit**
+- **Memberships — Read**
 
-The production Worker is named `god-confiqs-fixed`. To deploy this project from GitHub:
+If your Cloudflare login has access to multiple accounts, make sure the token is scoped to the account where you want the panel created. Cloudflare may ask you to enable a `workers.dev` subdomain before publishing your Worker.
 
-1. Open [Cloudflare Dashboard](https://dash.cloudflare.com/) and select **Workers & Pages**.
-2. Connect the repository `somet8611-ux/God-Confiqs` using Workers Builds, with production branch `main`.
-3. Set the deploy command to `npx wrangler deploy`. The repository root contains `wrangler.toml`.
-4. Keep the D1 and service bindings in `wrangler.toml` configured for the production account. The current main Worker expects `PANEL_AUTH_DB`, `PANEL_DB`, `RECOVERY_DB`, `TENANTS_DB`, and the `PANEL_BACKEND` service binding.
-5. Run the first deployment and verify the main site, `/install`, and `/portal`.
+### Keep your token safe
 
-Do not copy production database IDs or service bindings into another customer's installation. Customer installations are provisioned separately by the installer.
+- Never share your API token with anyone or publish it.
+- Do not paste your token into GitHub, public messages, or support chats.
+- The installer uses the token to perform setup; it is not intended to be stored as your panel credential.
+- Once installation is complete, revoke the temporary token in Cloudflare if you no longer need it.
 
-## Project layout
+## Project files
 
-- `worker.js` — main Worker source: website, admin UI, customer portal, installer UI, and API routes.
-- `customer-worker-template.js` — standalone Worker source uploaded for each customer.
-- `wrangler.toml` — main Worker identity and production resource bindings.
-- `README.md` — project overview and installation instructions.
-- `.gitignore` — local-only files and secrets excluded from version control.
-
-## Important notes
-
-- Each successful customer installation creates a separate Worker and D1 database in the selected customer's Cloudflare account.
-- The customer Worker template is independent and does not use the main Worker's `PANEL_BACKEND` service binding.
-- Keep the existing `vless-admin-panel` Worker unchanged.
-- A successful deployment of the main Worker is separate from testing a real customer provisioning flow. Test installation with a controlled Cloudflare account before offering it publicly.
-- Never commit API tokens, passwords, private keys, database credentials, or local `.env` files.
+- `worker.js` — application and installer source.
+- `customer-worker-template.js` — source used to create each customer's separate Worker.
+- `wrangler.toml` — deployment configuration.
