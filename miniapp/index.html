@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10131c">
+<title>GOD CONFIQS</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0d111b;--panel:#171e2b;--panel2:#202a3a;--text:#f4f6fb;--muted:#a4afc1;--accent:#d6ad63;--line:#303b4e;--good:#55d6a0;--bad:#f17c88}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:500 15px/1.65 "Vazirmatn","Noto Sans Arabic",sans-serif}
+button,input,select{font:inherit}
+button{min-height:44px;cursor:pointer}
+.app{max-width:1120px;margin:auto;padding:20px}
+header{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#f0d18e,#b9893f);display:grid;place-items:center;color:#151515;font-size:25px;font-weight:800;box-shadow:0 8px 28px #d6ad6330}
+.brand h1{font:800 17px/1.3 Inter,sans-serif;letter-spacing:.7px;margin:0}.brand small{color:var(--muted)}
+select,input{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:11px;padding:10px 12px;min-height:44px}
+nav{display:flex;gap:7px;overflow:auto;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+nav button{white-space:nowrap;border:0;border-radius:11px;background:transparent;color:var(--muted);padding:9px 14px}
+nav button.active{background:var(--panel2);color:var(--accent)}
+.page{display:none}.page.active{display:block}
+h2{font-size:21px;line-height:1.4;margin:0 0 5px}.sub{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px}
+.stat small{color:var(--muted)}.stat strong{display:block;font:800 28px Inter,sans-serif;margin:12px 0 3px}.stat span{font-size:12px;color:var(--accent)}
+.section{margin-top:20px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.btn{border:0;border-radius:11px;padding:10px 15px;background:var(--accent);color:#171717;font-weight:800}
+.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn.danger{background:#512c36;color:#ffc1c6}
+.form{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}.form input,.form select{flex:1;min-width:150px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:480px}th,td{text-align:start;padding:13px 10px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
+.tag{display:inline-block;padding:4px 9px;border-radius:30px;background:#173d32;color:#83e6ba;font-size:12px}.empty{text-align:center;color:var(--muted);padding:22px}
+.pages-note{color:var(--muted);font-size:13px}.settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.setting{display:grid;gap:8px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:28px}
+@media(max-width:720px){.app{padding:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.settings{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:380px){.grid{gap:8px}.card{padding:12px}.stat strong{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand"><div class="logo">♛</div><div><h1>GOD CONFIQS</h1><small id="brandSub">داشبورد مدیریت اختصاصی</small></div></div>
+<select id="language" aria-label="زبان"><option value="fa">فارسی</option><option value="en">English</option><option value="ar">العربية</option></select></header>
+<nav id="nav">
+<button class="active" data-page="home" data-i18n="dashboard">داشبورد</button>
+<button data-page="configs" data-i18n="configs">کانفیگ‌ها</button>
+<button data-page="customers" data-i18n="customers">مشتریان</button>
+<button data-page="sales" data-i18n="sales">فروش</button>
+<button data-page="team" data-i18n="team">تیم من</button>
+<button data-page="settings" data-i18n="settings">تنظیمات</button>
+</nav>
+<main>
+<section class="page active" id="home"><h2 data-i18n="dashboard">داشبورد</h2><p class="sub" data-i18n="overview">نمای کلی کسب‌وکار شما</p>
+<div class="grid">
+<div class="card stat"><small data-i18n="configs">کانفیگ‌ها</small><strong id="configCount">0</strong><span>VLESS</span></div>
+<div class="card stat"><small data-i18n="customers">مشتریان</small><strong id="customerCount">0</strong><span>CRM</span></div>
+<div class="card stat"><small data-i18n="sales">فروش</small><strong id="saleCount">0</strong><span>Transactions</span></div>
+<div class="card stat"><small data-i18n="team">اعضای تیم</small><strong id="teamCount">0</strong><span>Team</span></div>
+</div>
+<div class="panel section"><h2>GOD CONFIQS <span aria-hidden="true">👑</span></h2><p class="pages-note" data-i18n="welcome">به پنل مدیریت خودتان خوش آمدید. از منوی بالا یک بخش را انتخاب کنید.</p></div>
+</section>
+<section class="page" id="configs"><div class="section-head"><div><h2 data-i18n="configs">کانفیگ‌ها</h2><p class="sub">VLESS configuration management</p></div><button class="btn" onclick="addConfig()" data-i18n="addConfig">+ کانفیگ جدید</button></div>
+<div class="panel"><div class="form"><input id="configName" placeholder="نام کانفیگ"><input id="configUUID" placeholder="UUID"><input id="configServer" placeholder="آدرس سرور"></div><div class="table-wrap"><table><thead><tr><th>نام</th><th>سرور</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody id="configRows"></tbody></table></div></div></section>
+<section class="page" id="customers"><div class="section-head"><div><h2 data-i18n="customers">مشتریان</h2><p class="sub">Customer management</p></div><button class="btn" onclick="addCustomer()" data-i18n="addCustomer">+ مشتری جدید</button></div>
+<div class="panel"><div class="form"><input id="customerName" placeholder="نام مشتری"><input id="customerContact" placeholder="شناسه یا راه ارتباطی"></div><div class="table-wrap"><table><thead><tr><th>نام</th><th>شناسه</th><th>عملیات</th></tr></thead><tbody id="customerRows"></tbody></table></div></div></section>
+<section class="page" id="sales"><div class="section-head"><div><h2 data-i18n="sales">فروش</h2><p class="sub">Sales & payment records</p></div><button class="btn" onclick="addSale()" data-i18n="addSale">+ ثبت فروش</button></div>
+<div class="panel"><div class="form"><input id="saleTitle" placeholder="عنوان فروش"><input id="saleAmount" type="number" placeholder="مبلغ"><select id="saleMethod"><option>پرداخت دستی</option><option>درگاه آنلاین</option><option>کیف پول</option><option>سایر</option></select></div><div class="table-wrap"><table><thead><tr><th>عنوان</th><th>مبلغ</th><th>روش پرداخت</th></tr></thead><tbody id="saleRows"></tbody></table></div></div></section>
+<section class="page" id="team"><div class="section-head"><div><h2 data-i18n="team">تیم من</h2><p class="sub">Team members & roles</p></div><button class="btn" onclick="addMember()" data-i18n="addMember">+ افزودن عضو</button></div>
+<div class="panel"><div class="form"><input id="memberName" placeholder="نام عضو"><select id="memberRole"><option>مدیر</option><option>زیرکاربر</option></select></div><div class="table-wrap"><table><thead><tr><th>نام</th><th>نقش</th></tr></thead><tbody id="teamRows"></tbody></table></div></div></section>
+<section class="page" id="settings"><h2 data-i18n="settings">تنظیمات</h2><p class="sub" data-i18n="personalize">زبان و رنگ‌بندی دلخواهتان را انتخاب کنید.</p><div class="panel settings">
+<label class="setting"><span data-i18n="theme">رنگ اصلی</span><select id="theme"><option value="gold">Gold</option><option value="blue">Blue</option><option value="green">Green</option><option value="purple">Purple</option></select></label>
+<label class="setting"><span data-i18n="language">زبان</span><select id="language2"><option value="fa">فارسی</option><option value="en">English</option><option value="ar">العربية</option></select></label>
+</div><p class="pages-note">نسخه نمایشی — ورود، ذخیره‌سازی امن و اتصال API باید در بک‌اند فعال شوند.</p></section>
+</main><footer>GOD CONFIQS · Customer-owned workspace</footer>
+</div>
+<script>
+const tg=window.Telegram?.WebApp;if(tg){tg.ready();tg.expand();}
+const $=id=>document.getElementById(id);
+const store={configs:JSON.parse(localStorage.getItem("gc_configs")||"[]"),customers:JSON.parse(localStorage.getItem("gc_customers")||"[]"),sales:JSON.parse(localStorage.getItem("gc_sales")||"[]"),team:JSON.parse(localStorage.getItem("gc_team")||"[]")};
+const words={fa:{dashboard:"داشبورد",configs:"کانفیگ‌ها",customers:"مشتریان",sales:"فروش",team:"تیم من",settings:"تنظیمات",overview:"نمای کلی کسب‌وکار شما",welcome:"به پنل مدیریت خودتان خوش آمدید. از منوی بالا یک بخش را انتخاب کنید.",addConfig:"+ کانفیگ جدید",addCustomer:"+ مشتری جدید",addSale:"+ ثبت فروش",addMember:"+ افزودن عضو",personalize:"زبان و رنگ‌بندی دلخواهتان را انتخاب کنید.",theme:"رنگ اصلی",language:"زبان"},en:{dashboard:"Dashboard",configs:"Configurations",customers:"Customers",sales:"Sales",team:"My team",settings:"Settings",overview:"Your business at a glance",welcome:"Welcome to your workspace. Choose a section from the navigation.",addConfig:"+ New config",addCustomer:"+ New customer",addSale:"+ Record sale",addMember:"+ Add member",personalize:"Choose your preferred language and accent color.",theme:"Accent color",language:"Language"},ar:{dashboard:"لوحة التحكم",configs:"الإعدادات",customers:"العملاء",sales:"المبيعات",team:"فريقي",settings:"الإعدادات",overview:"نظرة عامة على عملك",welcome:"مرحباً بك. اختر قسماً من القائمة.",addConfig:"+ إعداد جديد",addCustomer:"+ عميل جديد",addSale:"+ تسجيل بيع",addMember:"+ إضافة عضو",personalize:"اختر اللغة واللون المفضلين.",theme:"اللون الرئيسي",language:"اللغة"}};
+function save(){Object.entries(store).forEach(([k,v])=>localStorage.setItem("gc_"+k,JSON.stringify(v)));render();}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+function addConfig(){const name=$("configName").value.trim(),uuid=$("configUUID").value.trim(),server=$("configServer").value.trim();if(!name||!uuid||!server)return alert("همه فیلدها را کامل کنید.");store.configs.push({name,uuid,server});["configName","configUUID","configServer"].forEach(id=>$(id).value="");save();}
+function addCustomer(){const name=$("customerName").value.trim(),contact=$("customerContact").value.trim();if(!name||!contact)return alert("اطلاعات مشتری را وارد کنید.");store.customers.push({name,contact});$("customerName").value=$("customerContact").value="";save();}
+function addSale(){const title=$("saleTitle").value.trim(),amount=Number($("saleAmount").value),method=$("saleMethod").value;if(!title||amount<=0)return alert("عنوان و مبلغ معتبر وارد کنید.");store.sales.push({title,amount,method});$("saleTitle").value=$("saleAmount").value="";save();}
+function addMember(){const name=$("memberName").value.trim();if(!name)return alert("نام عضو را وارد کنید.");store.team.push({name,role:$("memberRole").value});$("memberName").value="";save();}
+function removeItem(type,i){if(confirm("این مورد حذف شود؟")){store[type].splice(i,1);save();}}
+function render(){$("configCount").textContent=store.configs.length;$("customerCount").textContent=store.customers.length;$("saleCount").textContent=store.sales.length;$("teamCount").textContent=store.team.length;
+$("configRows").innerHTML=store.configs.map((x,i)=>'<tr><td>'+esc(x.name)+'</td><td>'+esc(x.server)+'</td><td><span class="tag">Active</span></td><td><button class="btn danger" onclick="removeItem(\'configs\','+i+')">حذف</button></td></tr>').join("")||'<tr><td colspan="4" class="empty">هنوز کانفیگی ثبت نشده است.</td></tr>';
+$("customerRows").innerHTML=store.customers.map((x,i)=>'<tr><td>'+esc(x.name)+'</td><td>'+esc(x.contact)+'</td><td><button class="btn danger" onclick="removeItem(\'customers\','+i+')">حذف</button></td></tr>').join("")||'<tr><td colspan="3" class="empty">مشتری ثبت نشده است.</td></tr>';
+$("saleRows").innerHTML=store.sales.map(x=>'<tr><td>'+esc(x.title)+'</td><td>'+Number(x.amount).toLocaleString()+'</td><td>'+esc(x.method)+'</td></tr>').join("")||'<tr><td colspan="3" class="empty">فروشی ثبت نشده است.</td></tr>';
+$("teamRows").innerHTML=store.team.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+esc(x.role)+'</td></tr>').join("")||'<tr><td colspan="2" class="empty">عضوی اضافه نشده است.</td></tr>';}
+const accent={gold:"#d6ad63",blue:"#68aaff",green:"#55d6a0",purple:"#b89aff"};$("theme").onchange=()=>document.documentElement.style.setProperty("--accent",accent[$("theme").value]);
+function setLanguage(lang){document.documentElement.lang=lang;document.documentElement.dir=lang==="en"?"ltr":"rtl";document.body.style.fontFamily=lang==="en"?'"Inter","Noto Sans",sans-serif':lang==="ar"?'"Noto Sans Arabic","Vazirmatn",sans-serif':'"Vazirmatn","Noto Sans Arabic",sans-serif';document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(words[lang][key])el.textContent=words[lang][key];});$("language").value=$("language2").value=lang;}
+$("language").onchange=()=>{$("language2").value=$("language").value;setLanguage($("language").value);};$("language2").onchange=()=>{$("language").value=$("language2").value;setLanguage($("language2").value);};
+render();
+</script>
+</body></html>
