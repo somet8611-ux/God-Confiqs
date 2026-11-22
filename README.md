@@ -8,19 +8,14 @@
 |---|---|
 | Automatic installer | [Open Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install) |
 | Customer portal | [Open Customer Portal](https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal) |
+| Mini App prototype source | [miniapp/index.html](miniapp/index.html) |
 | Source code | [GitHub repository](https://github.com/somet8611-ux/God-Confiqs) |
 
-## Screenshots
+## Mini App prototype
 
-The images below are live page captures. Open the links above if the page has changed since the screenshot was generated.
+The initial responsive Mini App interface is in `miniapp/index.html`. It includes dashboard, VLESS configuration, customer, sales, team, language, and theme screens. It uses Vazirmatn for Persian, Inter/Noto Sans for English, and Noto Sans Arabic for Arabic. Telegram Web App SDK initialization is included.
 
-### Automatic installer
-
-![GOD CONFIQS installer page](https://image.thum.io/get/width/1200/crop/900/noanimate/https://god-confiqs-fixed.zeus-n73k47.workers.dev/install)
-
-### Customer portal
-
-![GOD CONFIQS customer portal](https://image.thum.io/get/width/1200/crop/900/noanimate/https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal)
+**Prototype limitation:** this is a front-end prototype using browser local storage for sample data. It is not yet connected to customer D1 databases, secure authentication, the installer-issued bot access code, or production VLESS provisioning. Do not use it to store real customer credentials or configuration secrets.
 
 ## What the installer does
 
@@ -111,11 +106,14 @@ The installer uses the submitted token to make the provisioning requests. It is 
 
 - `worker.js` — main application, installer interface, and provisioning API.
 - `customer-worker-template.js` — standalone Worker template deployed for each customer.
+- `miniapp/index.html` — initial Telegram Mini App / responsive web interface prototype.
 - `wrangler.toml` — configuration for the main application deployment.
 
 ## Important
 
 Each customer installation is intended to have its own Worker and D1 database in the customer's selected Cloudflare account. A customer's panel resources are separate from the main GOD CONFIQS application resources.
+
+The installer does not yet issue a secure Telegram bot pairing code or automatically connect the Mini App to each newly installed customer panel. That integration must be implemented and tested before it is described as available.
 
 The installer and customer provisioning flow should be tested with a controlled Cloudflare account before being offered as a public production service.
 
