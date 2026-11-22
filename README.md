@@ -1,97 +1,179 @@
 # GOD CONFIQS
 
-**GOD CONFIQS** is an independent VLESS panel and customer-management project built around Cloudflare Workers and D1. Its installer is designed to create a separate Worker and database in each customer's own Cloudflare account.
+**GOD CONFIQS** is an independent VLESS configuration, customer-management, and business-management platform. The project is built around Cloudflare Workers and D1, with the goal of giving each operator a separate workspace and keeping customer data isolated.
+
+> **Project status:** GOD CONFIQS is under active development. The installer and customer Worker are separate from the Mini App prototype. Features marked as planned are not yet production-ready.
 
 ## Quick access
 
-| Page | Link |
+| Resource | Description |
 |---|---|
-| Automatic installer | [Open Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install) |
-| Customer portal | [Open Customer Portal](https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal) |
-| Mini App prototype source | [miniapp/index.html](miniapp/index.html) |
-| Source code | [GitHub repository](https://github.com/somet8611-ux/God-Confiqs) |
+| [Automatic installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install) | Start creating a dedicated customer panel |
+| [Customer portal](https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal) | Open the installer portal |
+| [Mini App source](miniapp/index.html) | Responsive Telegram Mini App / web interface prototype |
+| [GitHub repository](https://github.com/somet8611-ux/God-Confiqs) | Source code and project updates |
 
-## Mini App prototype
+## What is GOD CONFIQS?
 
-The initial responsive Mini App interface is in `miniapp/index.html`. It includes dashboard, VLESS configuration, customer, sales, team, language, and theme screens. It uses Vazirmatn for Persian, Inter/Noto Sans for English, and Noto Sans Arabic for Arabic. Telegram Web App SDK initialization is included.
+GOD CONFIQS is intended to bring VLESS operations and day-to-day business management into one platform. Each customer/operator should have their own panel, data, settings, and team rather than sharing one common customer database.
 
-**Prototype limitation:** this is a front-end prototype using browser local storage for sample data. It is not yet connected to customer D1 databases, secure authentication, the installer-issued bot access code, or production VLESS provisioning. Do not use it to store real customer credentials or configuration secrets.
+The long-term product direction includes:
+
+- Creating and managing VLESS configurations.
+- Managing customers, sales, and payment records.
+- Providing a personal dashboard for each operator.
+- Allowing each operator to customize the panel's language and appearance.
+- Allowing each operator to create team members and assign roles.
+- Supporting a Telegram Mini App as well as a standalone web experience.
+- Keeping each customer's workspace and database separate.
+
+These are product goals; consult the implementation status below before relying on any feature.
+
+## Mini App
+
+The first Mini App interface prototype is located at [`miniapp/index.html`](miniapp/index.html).
+
+### What the current prototype demonstrates
+
+- A responsive dashboard layout for desktop and mobile screens.
+- Navigation between Dashboard, Configurations, Customers, Sales, Team, and Settings.
+- Demo forms to add and remove VLESS configuration records, customer records, sales records, and team entries.
+- Dashboard counters based on the records entered in the browser.
+- Persian, English, and Arabic interface options, including right-to-left / left-to-right layout changes.
+- Accent-color selection.
+- Telegram Web App SDK initialization using `ready()` and `expand()` when the page is opened inside Telegram.
+
+### How to try the prototype
+
+1. Open the [Mini App source file](miniapp/index.html) in GitHub.
+2. To run it as a webpage, serve the file from a web host or a local static web server. A GitHub source-code page is not itself the running Mini App.
+3. Open the hosted page in a browser. For Telegram testing, configure a Telegram bot's Mini App entry point to use the hosted HTTPS address, then open it from Telegram.
+4. Add sample records in the different sections and change the language or accent color in Settings.
+
+### Important prototype limitations
+
+The current Mini App is a **front-end demonstration**, not a production-connected application:
+
+- Its sample records are stored in the browser's `localStorage`; they are not stored in the customer's Cloudflare D1 database.
+- It does not yet authenticate a panel owner or verify Telegram `initData` on a trusted server.
+- It is not yet connected to the installer, customer Worker APIs, or a bot-pairing flow.
+- The displayed configuration/customer/sales/team records are not provisioned or synchronized with a real VLESS server.
+- The current interface offers Persian, English, and Arabic only. Additional language support and script-specific font coverage can be added as localization is developed.
+- A production PWA setup (web app manifest, service worker, install/offline behavior) has not yet been completed.
+
+Do not use this prototype to store real customer information, passwords, API tokens, UUIDs, or other sensitive configuration data.
+
+## Intended customer journey
+
+The intended end-to-end flow is:
+
+1. An operator opens the GOD CONFIQS installer.
+2. The operator authorizes the installation by supplying a Cloudflare API token with the required permissions and selecting an account.
+3. The installer creates a dedicated customer Worker and D1 database in that Cloudflare account.
+4. The operator opens the new panel URL and completes the initial panel setup.
+5. In a future integration, a secure, expiring, single-use pairing code will connect the operator's panel to their Telegram bot / Mini App.
+6. The operator manages their own configurations, customers, sales, team, language, and appearance from their workspace.
+
+**Steps 1–4 describe the intended installer workflow. Steps 5–6 are planned integration/product behavior and must not be considered available until implemented and tested.**
+
+## Architecture
+
+| Component | Responsibility |
+|---|---|
+| `worker.js` | Main GOD CONFIQS application, installer interface, and provisioning API |
+| `customer-worker-template.js` | Worker template deployed for an individual customer |
+| `miniapp/index.html` | Front-end prototype for Telegram and web |
+| `wrangler.toml` | Main application deployment configuration |
+| Cloudflare Workers | Run the main application and customer-specific panel Workers |
+| Cloudflare D1 | Provide a separate database for each customer installation |
+
+The intended isolation model is one customer Worker and one D1 database per customer installation. The existing `vless-admin-panel` Worker is a separate legacy service and is not the target of this project's customer provisioning workflow.
 
 ## What the installer does
 
-The installer provisions a customer's panel inside the Cloudflare account selected by that customer. It is intended to create:
+The installer is designed to provision a customer's panel inside the Cloudflare account selected by that customer. It creates:
 
 - A dedicated Cloudflare Worker for the customer.
 - A separate Cloudflare D1 database for that Worker.
-- A customer-specific `workers.dev` address to open the panel.
+- A customer-specific `workers.dev` address for the panel.
 
-The customer does not need to create database tables or upload Worker code manually. The installer performs those provisioning steps after the Cloudflare token is verified and the account is selected.
+The customer should not need to create database tables or upload the Worker code manually. The installer performs the provisioning steps after the Cloudflare token is verified and an account is selected.
 
-## VLESS server requirement
+### Install your own panel
 
-The installer creates the customer's dashboard Worker and D1 database; it does **not** create a VPS, deploy Xray/V2Ray/sing-box, or change an existing VLESS server. The customer must already have a compatible VLESS server and add each generated UUID to that server's inbound configuration before the connection can work. The current customer template generates VLESS-over-WebSocket connection links with TLS enabled or disabled; it is not yet a universal subscription manager or a server-side provisioning system.
+1. Open the [GOD CONFIQS Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install).
+2. Select **Create pre-configured token**. Cloudflare opens its API Token page with the requested permissions filled in.
+3. Review the permissions and account scope, create the token, and copy it.
+4. Return to the installer and paste the token. Select **Verify token & load accounts**.
+5. Choose the Cloudflare account where you want your panel, then select **Create my dedicated panel**.
+6. Wait for the installer to finish creating the D1 database, initializing its tables, uploading the customer Worker, and enabling its `workers.dev` address.
+7. Save the panel URL shown by the installer and open it to complete the initial setup.
 
-## Install your own panel
-
-### 1. Open the installer
-
-Go to the [GOD CONFIQS Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install).
-
-### 2. Create a pre-configured Cloudflare API token
-
-Click **Create pre-configured token**. Cloudflare opens its API Token page with the permissions requested by the installer already filled in.
-
-Sign in if Cloudflare asks you to. Review the permissions and account scope, then create the token. Cloudflare displays the token after creation.
-
-### 3. Copy and verify the token
-
-Copy the token from Cloudflare, return to the installer, and paste it into the token field. Click **Verify token & load accounts**.
-
-The installer checks that the token is active and retrieves the Cloudflare accounts it can access. If you have access to multiple accounts, make sure you choose the correct one.
-
-### 4. Create your panel
-
-Choose the Cloudflare account where you want the panel, then click **Create my dedicated panel**.
-
-The installer creates a D1 database, initializes its tables, uploads the customer Worker, and enables its `workers.dev` address. Wait for the success message rather than closing the page during setup.
-
-### 5. Save your panel address
-
-When installation finishes, copy the panel URL shown on the result screen and keep it somewhere safe. Open that URL to access your dedicated panel and complete its initial setup.
+The exact result depends on the selected Cloudflare account, token permissions, and account-level Workers configuration.
 
 ## Cloudflare token permissions
 
-The pre-configured token requests these permissions:
+The installer requests the following permissions:
 
-| Permission | Why it is needed |
+| Permission | Purpose |
 |---|---|
 | Workers Scripts — Edit | Upload and manage the dedicated customer Worker |
 | D1 — Edit | Create and initialize the customer's database |
 | Memberships — Read | Read the Cloudflare account memberships available to the token |
 
-If your Cloudflare login has access to several accounts, restrict the token to the intended account where possible and select that same account in the installer. Cloudflare may require you to enable a `workers.dev` subdomain before it can publish the new Worker.
+Where possible, restrict the token to the intended account. Cloudflare may require the account's `workers.dev` subdomain to be enabled before it can publish the customer Worker.
+
+## VLESS server requirement
+
+The installer creates the customer's dashboard Worker and D1 database. It does **not**:
+
+- Provide a VPS or hosting server.
+- Install or operate Xray, V2Ray, or sing-box.
+- Create or modify a VLESS inbound on an external server.
+- Guarantee that a generated connection will work without a compatible server configuration.
+
+The customer must already have access to a compatible VLESS server and add the relevant client UUIDs to that server's inbound configuration. The current customer template generates VLESS-over-WebSocket links with TLS enabled or disabled; it is not yet a universal subscription manager or server-side provisioning system.
+
+## Feature status
+
+| Feature | Current status |
+|---|---|
+| Main installer and customer Worker provisioning | Implemented; test with a controlled Cloudflare account before public production use |
+| Separate customer Worker and D1 database | Intended provisioning architecture |
+| Customer panel initial setup | Available in the customer Worker flow; test in the target account |
+| Mini App dashboard and section navigation | Front-end prototype |
+| Demo configuration, customer, sales, and team records | Browser-local prototype data only |
+| Persian / English / Arabic UI selector | Present in prototype |
+| Accent-color selector | Present in prototype |
+| Telegram Web App SDK initialization | Present; bot launch configuration and secure identity verification are not complete |
+| Secure Telegram bot pairing code | Not implemented |
+| Mini App connected to each customer's D1/API | Not implemented |
+| Production authentication and role-based team permissions | Not implemented in the Mini App |
+| Production PWA manifest, service worker, and offline support | Not implemented |
+| Automatic VLESS server provisioning | Not implemented |
 
 ## Security recommendations
 
-- Treat the API token like a password. Do not share it with anyone.
-- Never paste the token into GitHub, public messages, screenshots, or support chats.
-- Use the token only for the installation process.
-- After installation, revoke the temporary token in Cloudflare if you no longer need it.
-- Keep your panel login details private.
+- Treat your Cloudflare API token like a password. Never share it.
+- Never commit tokens, bot tokens, passwords, private keys, or customer secrets to GitHub.
+- Use a narrowly scoped token for installation and revoke it when it is no longer needed.
+- Keep panel login details private.
+- Do not store real credentials or sensitive customer data in the current Mini App prototype.
+- Before production Telegram integration, validate Telegram `initData` server-side and use short-lived, single-use pairing codes. Never trust a Telegram user ID supplied only by browser JavaScript.
+- Enforce tenant authorization on the server for every customer API request; hiding another customer's data in the UI is not sufficient.
 
-The installer uses the submitted token to make the provisioning requests. It is not intended to become a stored customer credential.
+The installer uses the submitted token to make provisioning requests. It is not intended to become a permanently stored customer credential.
 
 ## Troubleshooting
 
 **Cloudflare says the token is invalid or inactive**
 - Create a new token from the installer's pre-configured token link.
-- Check that the token was copied completely and has not expired or been revoked.
+- Check that it was copied completely and has not expired or been revoked.
 - Confirm that the requested permissions are present.
 
 **No Cloudflare account appears**
 - Confirm that the Cloudflare user has access to an account.
-- Check that the token's account scope includes the account you want to use.
-- Create a replacement token with the correct account scope if necessary.
+- Check that the token's account scope includes the intended account.
 
 **The Worker address cannot be enabled**
 - Open the Cloudflare dashboard for the selected account.
@@ -102,25 +184,17 @@ The installer uses the submitted token to make the provisioning requests. It is 
 - Verify the token permissions and selected account.
 - Do not share your token when asking for help; share only the error message with the token removed.
 
-## Project files
+## Contributing
 
-- `worker.js` — main application, installer interface, and provisioning API.
-- `customer-worker-template.js` — standalone Worker template deployed for each customer.
-- `miniapp/index.html` — initial Telegram Mini App / responsive web interface prototype.
-- `wrangler.toml` — configuration for the main application deployment.
+Contributions, bug reports, and suggestions are welcome. Before submitting changes:
 
-## Important
-
-Each customer installation is intended to have its own Worker and D1 database in the customer's selected Cloudflare account. A customer's panel resources are separate from the main GOD CONFIQS application resources.
-
-The installer does not yet issue a secure Telegram bot pairing code or automatically connect the Mini App to each newly installed customer panel. That integration must be implemented and tested before it is described as available.
-
-The installer and customer provisioning flow should be tested with a controlled Cloudflare account before being offered as a public production service.
+1. Explain the problem or proposed improvement.
+2. Keep customer data isolation and server-side authorization in mind.
+3. Never include real credentials, tokens, UUIDs, or private customer data in commits or issues.
+4. Clearly distinguish working features from prototypes and planned features.
 
 ## Contact
 
-📩 For collaboration opportunities and further information, please contact the creator: @itsmamadhasan
+📩 Creator and collaboration: [@itsmamadhasan](https://t.me/itsmamadhasan)
 
-📢 Join our official Telegram channel for updates and announcements: ⬇️
-
-https://t.me/thegodconfigs
+📢 Official Telegram channel: [t.me/thegodconfigs](https://t.me/thegodconfigs)
