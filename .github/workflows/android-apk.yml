@@ -30,6 +30,10 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Verify mobile app files
+        working-directory: mobile-app
+        run: test -f package.json && test -f app.json
+
       - name: Install JavaScript dependencies
         working-directory: mobile-app
         run: npm install
