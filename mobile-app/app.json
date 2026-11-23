@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "GOD CONFIQS",
+    "slug": "god-confiqs",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.godconfiqs.app",
+      "versionCode": 1
+    },
+    "ios": {
+      "bundleIdentifier": "com.godconfiqs.app"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "17640b1d-0da1-450a-98fd-89b93e0b698d"
+      }
+    },
+    "plugins": [
+      "expo-status-bar"
+    ]
+  }
+}
