@@ -5,7 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
     "android": {
       "package": "com.godconfiqs.app",
       "versionCode": 1
@@ -15,8 +14,11 @@
     },
     "extra": {
       "eas": {
-        "projectId": "[fill-in-after-eas-init]"
+        "projectId": "17640b1d-0da1-450a-98fd-89b93e0b698d"
       }
-    }
+    },
+    "plugins": [
+      "expo-status-bar"
+    ]
   }
 }
