@@ -1,0 +1,55 @@
+name: Build GOD CONFIQS Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - expo-mobile-app
+    paths:
+      - "mobile-app/**"
+      - ".github/workflows/android-apk.yml"
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile-app/package-lock.json
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install JavaScript dependencies
+        working-directory: mobile-app
+        run: npm install
+
+      - name: Generate native Android project
+        working-directory: mobile-app
+        run: npx expo prebuild --platform android --non-interactive
+
+      - name: Build release APK
+        working-directory: mobile-app/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: god-confiqs-android-apk
+          path: mobile-app/android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
