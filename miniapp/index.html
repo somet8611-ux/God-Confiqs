@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="GOD CONFIQS">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon.svg">
 <title>GOD CONFIQS</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +24,7 @@ button,input,select{font:inherit}
 button{min-height:44px;cursor:pointer}
 .app{max-width:1120px;margin:auto;padding:20px}
 header{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}
-.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#f0d18e,#b9893f);display:grid;place-items:center;color:#151515;font-size:25px;font-weight:800;box-shadow:0 8px 28px #d6ad6330}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:50px;height:50px;border-radius:15px;display:block;object-fit:cover;box-shadow:0 8px 28px #d6ad6330;border:1px solid #d6ad6355}
 .brand h1{font:800 17px/1.3 Inter,sans-serif;letter-spacing:.7px;margin:0}.brand small{color:var(--muted)}
 select,input{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:11px;padding:10px 12px;min-height:44px}
 nav{display:flex;gap:7px;overflow:auto;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
@@ -53,7 +54,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:28px}
 </head>
 <body>
 <div class="app">
-<header><div class="brand"><div class="logo">♛</div><div><h1>GOD CONFIQS</h1><small id="brandSub">داشبورد مدیریت اختصاصی</small></div></div>
+<header><div class="brand"><img class="logo" src="./icon.svg" alt="GOD CONFIQS logo" width="50" height="50"><div><h1>GOD CONFIQS</h1><small id="brandSub">داشبورد مدیریت اختصاصی</small></div></div>
 <select id="language" aria-label="زبان"><option value="fa">فارسی</option><option value="en">English</option><option value="ar">العربية</option></select></header>
 <details class="pwa-install">
 <summary>📲 نصب GOD CONFIQS روی صفحه اصلی</summary>
