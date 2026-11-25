@@ -33,6 +33,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: miniapp
+      - name: Wait for artifact registration
+        run: sleep 10
       - name: Deploy preview
         id: deployment
         uses: actions/deploy-pages@v4
