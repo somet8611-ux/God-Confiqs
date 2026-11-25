@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#10131c">
+<meta name="description" content="GOD CONFIQS — رابط نمایشی داشبورد مدیریت VLESS">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GOD CONFIQS">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
 <title>GOD CONFIQS</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,6 +42,10 @@ h2{font-size:21px;line-height:1.4;margin:0 0 5px}.sub{color:var(--muted);margin:
 .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:480px}th,td{text-align:start;padding:13px 10px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
 .tag{display:inline-block;padding:4px 9px;border-radius:30px;background:#173d32;color:#83e6ba;font-size:12px}.empty{text-align:center;color:var(--muted);padding:22px}
 .pages-note{color:var(--muted);font-size:13px}.settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.setting{display:grid;gap:8px}
+.pwa-install{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:0 0 16px;padding:12px 15px;color:var(--text)}
+.pwa-install summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.pwa-install-body{padding-top:8px;color:var(--muted);font-size:13px}
+.pwa-install-body p{margin:8px 0}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:28px}
 @media(max-width:720px){.app{padding:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.settings{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}}
 @media(max-width:380px){.grid{gap:8px}.card{padding:12px}.stat strong{font-size:23px}}
@@ -45,6 +55,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:28px}
 <div class="app">
 <header><div class="brand"><div class="logo">♛</div><div><h1>GOD CONFIQS</h1><small id="brandSub">داشبورد مدیریت اختصاصی</small></div></div>
 <select id="language" aria-label="زبان"><option value="fa">فارسی</option><option value="en">English</option><option value="ar">العربية</option></select></header>
+<details class="pwa-install">
+<summary>📲 نصب GOD CONFIQS روی صفحه اصلی</summary>
+<div class="pwa-install-body">
+<p><b>iPhone / iPad:</b> در Safari روی Share بزن، سپس <b>Add to Home Screen</b> را انتخاب کن و گزینه <b>Open as Web App</b> را روشن نگه دار.</p>
+<p><b>Android:</b> از منوی مرورگر گزینه <b>Install app</b> یا <b>Add to Home screen</b> را انتخاب کن.</p>
+<p class="pages-note">این نسخه فقط برای تست رابط کاربری است. اطلاعات نمونه فقط در حافظه همین مرورگر ذخیره می‌شود و به حساب یا دیتابیس واقعی متصل نیست.</p>
+</div>
+</details>
 <nav id="nav">
 <button class="active" data-page="home" data-i18n="dashboard">داشبورد</button>
 <button data-page="configs" data-i18n="configs">کانفیگ‌ها</button>
@@ -100,5 +118,12 @@ const accent={gold:"#d6ad63",blue:"#68aaff",green:"#55d6a0",purple:"#b89aff"};$(
 function setLanguage(lang){document.documentElement.lang=lang;document.documentElement.dir=lang==="en"?"ltr":"rtl";document.body.style.fontFamily=lang==="en"?'"Inter","Noto Sans",sans-serif':lang==="ar"?'"Noto Sans Arabic","Vazirmatn",sans-serif':'"Vazirmatn","Noto Sans Arabic",sans-serif';document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(words[lang][key])el.textContent=words[lang][key];});$("language").value=$("language2").value=lang;}
 $("language").onchange=()=>{$("language2").value=$("language").value;setLanguage($("language").value);};$("language2").onchange=()=>{$("language").value=$("language2").value;setLanguage($("language2").value);};
 render();
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(err => {
+      console.warn("GOD CONFIQS offline support could not be enabled:", err);
+    });
+  });
+}
 </script>
 </body></html>
