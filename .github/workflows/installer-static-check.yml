@@ -1,0 +1,33 @@
+name: Installer source checks
+
+on:
+  push:
+    branches:
+      - "installer-*"
+    paths:
+      - "installer/**"
+      - ".github/workflows/installer-static-check.yml"
+  pull_request:
+    paths:
+      - "installer/**"
+      - ".github/workflows/installer-static-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check installer Worker syntax
+        run: node --check installer/worker.mjs
+      - name: Check local installer syntax
+        run: node --check installer/installer.mjs
+      - name: Check customer Worker syntax
+        run: node --input-type=module --check < installer/templates/customer-worker.js
+      - name: Run security invariants
+        run: node installer/tests/static-check.mjs
