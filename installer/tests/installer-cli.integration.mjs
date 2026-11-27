@@ -114,7 +114,7 @@ try {
   assert.ok(commands.includes("--version"), "Wrangler version check should run");
   assert.ok(commands.includes("login"), "OAuth device login should run");
   assert.ok(commands.includes("whoami"), "OAuth identity and keyring check should run");
-  assert.ok(commands.includes("d1 create"), "a new D1 should be created only after confirmation");
+  assert.ok(commands.includes("d1 create"), "a new D1 should be created only after confirmation; commands=" + JSON.stringify(commands) + "; args=" + JSON.stringify(success.wranglerRows.map((row) => row.args)));
   assert.ok(commands.includes("d1 execute"), "the D1 schema should be applied");
   assert.ok(commands.includes("deploy"), "the new customer Worker should be deployed");
   assert.ok(success.wranglerRows.every((row) => Object.values(row.envState).every((value) => value === false)), "inherited API credentials/account override must not reach Wrangler");
