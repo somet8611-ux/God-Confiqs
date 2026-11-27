@@ -61,3 +61,10 @@ The proposed 0.2.7 changes are on a separate branch and are **not deployed yet**
 - The optional target Account ID is now validated as exactly 32 hexadecimal characters before the user is asked to confirm resource creation. This prevents malformed IDs from reaching Wrangler or creating partial resources.
 - A new mocked CLI integration suite exercises the success, explicit-cancel, malformed-account-ID, and API-token-rejection paths. It verifies that inherited `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_API_KEY`, `CLOUDFLARE_EMAIL`, and `CLOUDFLARE_ACCOUNT_ID` values are not passed to Wrangler; the installer host receives only unauthenticated GET template/health requests; the bootstrap code is stored locally with restrictive permissions; and no real Cloudflare resource is created during the test.
 - These tests improve local safety verification but do not prove real Cloudflare OAuth approval, D1 creation, or external `workers.dev` reachability. Those live tests remain release blockers.
+
+
+## 27 November 2026 deployment URL parser fix
+
+- The mocked CLI integration test exposed a real post-deploy bug: the URL regular expression required an extra hostname label and did not match the valid `worker.workers.dev` form. The installer could therefore deploy a new Worker and D1, then stop before reporting the panel URL and health result.
+- The parser now accepts both `worker.workers.dev` and `worker.account-subdomain.workers.dev`. The static suite checks the parser pattern, and the CLI mock exercises the single-label form.
+- This fixes the source-level defect; actual Wrangler output and a live `workers.dev` health request still need to be verified on a separate test account.
