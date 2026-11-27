@@ -44,6 +44,7 @@ const checks = [
   ["customer panel health declares no legacy panel connection", /legacyPanelConnected:false/.test(panel)],
   ["installer health endpoint is present", /service:\\?\"god-confiqs-installer/.test(worker)],
   ["provided account ID is validated before resource creation", installer.includes('if(accountId&&!/^[a-f0-9]{32}$/i.test(accountId))')],
+  ["workers.dev URL parser accepts single- and multi-label hosts", installer.includes('(?:\\.[a-z0-9-]+)*\\.workers\\.dev')],
   ["template integrity hashes are pinned", /PANEL_SHA256/.test(installer) && /SCHEMA_SHA256/.test(installer)],
   ["landing page discloses broad Workers and D1 permissions", /workers_scripts:write/.test(page) && /d1:write/.test(page)],
   ["Windows command matches the downloaded filename", /node god-confiqs-installer\.mjs/.test(page) && !/node \.god-confiqs-installer/.test(page)],
