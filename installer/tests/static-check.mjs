@@ -47,6 +47,7 @@ const checks = [
   ["workers.dev URL parser accepts single- and multi-label hosts", installer.includes('(?:\\.[a-z0-9-]+)*\\.workers\\.dev')],
   ["template integrity hashes are pinned", /PANEL_SHA256/.test(installer) && /SCHEMA_SHA256/.test(installer)],
   ["landing page discloses broad Workers and D1 permissions", /workers_scripts:write/.test(page) && /d1:write/.test(page)],
+  ["landing page explains public OAuth domain-verification blocker", /TXT/.test(page) && /Device Authorization/.test(page) && /workers.dev/.test(page)],
   ["Windows command matches the downloaded filename", /node god-confiqs-installer\.mjs/.test(page) && !/node \.god-confiqs-installer/.test(page)],
   ["installer version is consistent", /version:"0\.2\.7"/.test(worker) && /نسخه آزمایشی ۰٫۲٫۷/.test(page)],
   ["Worker embeds the current installer source", embedded("installer") === installer],
