@@ -1,6 +1,6 @@
 # Security and verification review
 
-Audit date: 26 November 2026. Scope: read-only inspection of the deployed `god-confiqs-installer` Worker and its source. No changes were made to `god-confiqs`, `god-confiqs-fixed`, or `vless-admin-panel`.
+Audit date: 27 November 2026. Scope: read-only inspection of the deployed `god-confiqs-installer` Worker and its source. No changes were made to `god-confiqs`, `god-confiqs-fixed`, or `vless-admin-panel`.
 
 ## Verified from the deployed source/configuration
 
@@ -42,3 +42,15 @@ Audit date: 26 November 2026. Scope: read-only inspection of the deployed `god-c
 - [ ] Confirm no existing Worker or D1 is overwritten or deleted.
 - [ ] Verify the generated panel URL is reachable from an external browser and matches the selected account.
 - [ ] Correct the health version string and verify the installer release version consistently.
+
+
+## 27 November 2026 follow-up — hardening patch prepared
+
+- `wrangler whoami` reports the OAuth token type and where credentials are stored, but does **not** return the granted OAuth scope list. The previous CLI version attempted to parse scope labels from this output and therefore stopped before creating any resources, even after a successful device login. The 0.2.7 source patch removes that invalid check and instead requires both an OAuth token and encrypted keyring storage. The Cloudflare consent screen is explicitly identified as the authoritative place to review granted permissions.
+- The CLI now removes inherited `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_API_KEY`, `CLOUDFLARE_EMAIL`, and `CLOUDFLARE_ACCOUNT_ID` from child processes. This prevents a shell-level API credential or stale account selection from silently overriding the explicit Wrangler device-flow authorization.
+- The Windows install instructions previously used `node .god-confiqs-installer.mjs`, which did not match the downloaded filename. The command is corrected to `node god-confiqs-installer.mjs`.
+- The Worker health version is aligned with the proposed source version 0.2.7, and the embedded installer, panel, SQL schema, and landing page are regenerated from the separately maintained files.
+- The `god-confiqs-tenants` D1 database contains its earlier schema (14 tables were visible through `sqlite_master`) but the D1 list metadata field `num_tables` reports 0. Direct counts for the inspected account, session, customer, workspace, user, proxy, settings, and recovery tables are all zero. Do not rely on the stale `num_tables` metadata field as proof that the database is empty or initialized.
+- The `god-confiqs-fixed` Worker still has its legacy service binding to `vless-admin-panel` and a `TENANTS_DB` binding to `god-confiqs-tenants`. It remains outside this patch and was not modified.
+
+The proposed 0.2.7 changes are on a separate branch and are **not deployed yet**. The existing installer deployment remains 0.2.6.1 until the updated CI checks pass and a controlled runtime test is completed.
