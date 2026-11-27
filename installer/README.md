@@ -1,6 +1,6 @@
 # GOD CONFIQS Installer — source snapshot
 
-This folder is a source-controlled snapshot of the deployed `god-confiqs-installer` Worker, retrieved from Cloudflare on **26 November 2026**. It is kept on a separate branch so the existing application branches and Workers are not changed.
+This folder is a source-controlled snapshot of the deployed `god-confiqs-installer` Worker, retrieved from Cloudflare on **26 November 2026**. The `installer-hardening-2026-11-27` branch contains a proposed 0.2.7 security and consistency patch; that patch is not deployed until its checks and runtime verification pass. All changes remain isolated from the protected application Workers.
 
 ## Files
 
@@ -28,11 +28,11 @@ The installer does **not** collect a Cloudflare API token or password in its web
 npx wrangler@4.119.0 login --device --use-keyring --scopes "account:read user:read workers:write workers_scripts:write d1:write"
 ```
 
-The user reviews and approves the request directly at Cloudflare. Wrangler stores OAuth credentials locally using the operating system credential store/keyring. The installer then asks the user to type `YES` before provisioning. No Cloudflare OAuth credential is sent to the installer Worker.
+The user reviews and approves the request directly at Cloudflare. Wrangler stores OAuth credentials locally using the operating system credential store/keyring. The installer then asks the user to type `YES` before provisioning. No Cloudflare OAuth credential is sent to the installer Worker. The CLI removes inherited API-token/key/email and account-ID environment overrides from its Wrangler child processes so a shell-level token cannot silently replace the device-flow identity.
 
 Cloudflare documents this device flow and `--use-keyring` in [Wrangler general commands](https://developers.cloudflare.com/workers/wrangler/commands/general/).
 
-**Important permission limitation:** Cloudflare's [Workers authorization documentation](https://developers.cloudflare.com/workers/authorization/) says Wrangler's OAuth login does not currently support granular authorization. Creating a new Worker requires the Workers product Admin role. Therefore the OAuth grant must be treated as broad account/product access, not a grant limited to one new Worker or one D1 database. The landing page discloses broad Workers/D1 permissions; users must understand and explicitly accept them.
+**Important permission limitation:** Cloudflare's [Workers authorization documentation](https://developers.cloudflare.com/workers/authorization/) says Wrangler's OAuth login does not currently support granular authorization. Creating a new Worker requires the Workers product Admin role. Therefore the OAuth grant must be treated as broad account/product access, not a grant limited to one new Worker or one D1 database. The landing page discloses broad Workers/D1 permissions; users must understand and explicitly accept them. Wrangler's `whoami` output does not expose the granted scope list; the Cloudflare consent screen is the authoritative review. The proposed 0.2.7 CLI checks that the active identity is an OAuth token and that credentials are stored in the encrypted OS keyring, but it does not claim to independently verify the granted scope list.
 
 ## Local requirements and flow
 
