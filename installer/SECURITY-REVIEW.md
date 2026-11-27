@@ -68,3 +68,11 @@ The proposed 0.2.7 changes are on a separate branch and are **not deployed yet**
 - The mocked CLI integration test exposed a real post-deploy bug: the URL regular expression required an extra hostname label and did not match the valid `worker.workers.dev` form. The installer could therefore deploy a new Worker and D1, then stop before reporting the panel URL and health result.
 - The parser now accepts both `worker.workers.dev` and `worker.account-subdomain.workers.dev`. The static suite checks the parser pattern, and the CLI mock exercises the single-label form.
 - This fixes the source-level defect; actual Wrangler output and a live `workers.dev` health request still need to be verified on a separate test account.
+
+
+## 27 November 2026 public OAuth prerequisite review
+
+- Cloudflare's self-managed third-party OAuth clients support Authorization Code (PKCE for browser/public clients), but not Device Authorization. Cloudflare requires a public client's URL domain to be verified by publishing a DNS TXT record.
+- The current installer has only a `workers.dev` hostname, whose DNS zone is not controlled by this project. Without a domain and DNS zone the project can verify, the public browser-only OAuth route is blocked. Do not claim public OAuth is available.
+- The implemented alternative is Cloudflare's own Wrangler Device Authorization Grant, executed locally with `--use-keyring`. It avoids exposing tokens to the installer but requires a computer/Node.js and grants broad, non-resource-granular permissions. The consent screen remains authoritative.
+- References: https://developers.cloudflare.com/fundamentals/oauth/create-an-oauth-client/ and https://developers.cloudflare.com/workers/wrangler/commands/general/.
