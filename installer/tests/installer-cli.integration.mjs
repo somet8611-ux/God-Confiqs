@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -17,7 +17,7 @@ function readJsonLines(path) {
   return readFileSync(path, "utf8").split(/\r?\n/).filter(Boolean).map(JSON.parse);
 }
 
-function makeCase(input, authMode = "oauth") {
+async function makeCase(accountInput, confirmation, authMode = "oauth") {
   const root = mkdtempSync(join(tmpdir(), "god-confiqs-cli-test-"));
   tempDirs.push(root);
   const bin = join(root, "bin");
@@ -95,12 +95,34 @@ function makeCase(input, authMode = "oauth") {
     CLOUDFLARE_EMAIL: "sentinel-email@example.invalid",
     CLOUDFLARE_ACCOUNT_ID: "sentinel-account-id-must-not-override"
   };
-  const result = spawnSync(process.execPath, [installerPath], {
+  const child = spawn(process.execPath, [installerPath], {
     cwd: root,
-    encoding: "utf8",
-    input,
     env,
-    timeout: 45000
+    stdio: ["pipe", "pipe", "pipe"]
+  });
+  const result = await new Promise((resolve, reject) => {
+    let stdout = "";
+    let stderr = "";
+    let accountSent = false;
+    let confirmationSent = false;
+    const timeout = setTimeout(() => child.kill("SIGKILL"), 45000);
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
+      if (accountInput !== undefined && !accountSent && stdout.includes("Optional target Account ID")) {
+        child.stdin.write(accountInput + "\n");
+        accountSent = true;
+      }
+      if (confirmation !== undefined && accountSent && !confirmationSent && stdout.includes("Type YES to create")) {
+        child.stdin.write(confirmation + "\n");
+        confirmationSent = true;
+      }
+    });
+    child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+    child.on("error", (error) => { clearTimeout(timeout); reject(error); });
+    child.on("close", (status, signal) => {
+      clearTimeout(timeout);
+      resolve({ status, signal, stdout, stderr, accountSent, confirmationSent });
+    });
   });
   return { root, result, wranglerRows: readJsonLines(wranglerLog), fetchRows: readJsonLines(fetchLog) };
 }
@@ -108,7 +130,7 @@ function makeCase(input, authMode = "oauth") {
 try {
   const accountId = "0123456789abcdef0123456789abcdef";
 
-  const success = makeCase(accountId + "\nYES\n");
+  const success = await makeCase(accountId, "YES");
   assert.equal(success.result.status, 0, success.result.stdout + "\n" + success.result.stderr);
   const commands = success.wranglerRows.map((row) => row.args[2] === "d1" ? row.args.slice(2, 4).join(" ") : row.args[2]);
   assert.ok(commands.includes("--version"), "Wrangler version check should run");
@@ -137,20 +159,20 @@ try {
   assert.ok(!success.result.stdout.includes("sentinel-api-token-must-not-reach-wrangler"));
   console.log("PASS  mocked OAuth/keyring install, D1 binding, deploy, health URL, and private bootstrap file");
 
-  const cancelled = makeCase(accountId + "\nNO\n");
+  const cancelled = await makeCase(accountId, "NO");
   assert.equal(cancelled.result.status, 0, cancelled.result.stdout + "\n" + cancelled.result.stderr);
   assert.ok(cancelled.result.stdout.includes("Cancelled. No Cloudflare resources were created."));
   assert.ok(!cancelled.wranglerRows.some((row) => row.args[2] === "d1" || row.args[2] === "deploy"), "cancellation must create no resources");
   assert.equal(readdirSync(cancelled.root, { withFileTypes: true }).filter((entry) => entry.isDirectory() && entry.name.startsWith("god-confiqs-")).length, 0);
   console.log("PASS  explicit cancellation stops before resource creation");
 
-  const invalidAccount = makeCase("not-a-cloudflare-account-id\n");
+  const invalidAccount = await makeCase("not-a-cloudflare-account-id", undefined);
   assert.notEqual(invalidAccount.result.status, 0);
   assert.ok(invalidAccount.result.stderr.includes("32 hexadecimal characters"));
   assert.ok(!invalidAccount.wranglerRows.some((row) => row.args[2] === "d1" || row.args[2] === "deploy"));
   console.log("PASS  malformed target account ID is rejected before resource creation");
 
-  const apiTokenLogin = makeCase("", "api");
+  const apiTokenLogin = await makeCase(undefined, undefined, "api");
   assert.notEqual(apiTokenLogin.result.status, 0);
   assert.ok(apiTokenLogin.result.stderr.includes("did not confirm an OAuth login"));
   assert.ok(!apiTokenLogin.wranglerRows.some((row) => row.args[2] === "d1" || row.args[2] === "deploy"));
