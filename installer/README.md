@@ -44,10 +44,15 @@ Cloudflare documents this device flow and `--use-keyring` in [Wrangler general c
 6. The script downloads templates and checks their SHA-256 hashes, creates randomly named Worker/D1 resources, applies the schema, deploys to `workers.dev`, and checks `/health`.
 7. The one-time first-admin code is written to a local `.bootstrap-code` file with restrictive permissions and printed to the terminal. Keep it private and delete it after first admin registration.
 
-An iPhone can approve the device code in a browser, but it cannot run the Wrangler installer by itself. This is a secure local-CLI alternative, not yet the requested browser-only few-button flow.
+An iPhone can approve the device code in a browser, but it cannot run the Wrangler installer by itself. This is a secure local-CLI alternative, not yet the requested browser-only few-button flow. If you enter an Account ID, the installer validates that it is exactly 32 hexadecimal characters before any resource-creation command runs.
 
 ## Scope
 
 This installer creates a separate Worker and D1 database for each person who runs it. It does not install Xray/V2Ray or provision a VLESS server. The customer template currently provides first-admin registration/login and basic user records; full proxy/configuration management remains incomplete.
 
 Do not use this preview for real customer data until the end-to-end authorization, deployment, registration, session, and isolation tests in `SECURITY-REVIEW.md` pass.
+
+
+## Automated installer checks
+
+The GitHub Actions workflow runs static source/security checks, customer Worker integration tests against isolated in-memory D1 databases, and a mocked CLI integration suite. The CLI suite verifies OAuth-only acceptance, encrypted-keyring confirmation, removal of inherited API credential overrides, explicit cancellation, Account ID validation, D1 binding creation, deployment URL parsing, health-check handling, and private local bootstrap-code output. It mocks Wrangler and HTTP responses; it does not replace the still-required live test on a separate Cloudflare account.

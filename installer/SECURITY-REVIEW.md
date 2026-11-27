@@ -54,3 +54,10 @@ Audit date: 27 November 2026. Scope: read-only inspection of the deployed `god-c
 - The `god-confiqs-fixed` Worker still has its legacy service binding to `vless-admin-panel` and a `TENANTS_DB` binding to `god-confiqs-tenants`. It remains outside this patch and was not modified.
 
 The proposed 0.2.7 changes are on a separate branch and are **not deployed yet**. The existing installer deployment remains 0.2.6.1 until the updated CI checks pass and a controlled runtime test is completed.
+
+
+## 27 November 2026 CLI verification follow-up
+
+- The optional target Account ID is now validated as exactly 32 hexadecimal characters before the user is asked to confirm resource creation. This prevents malformed IDs from reaching Wrangler or creating partial resources.
+- A new mocked CLI integration suite exercises the success, explicit-cancel, malformed-account-ID, and API-token-rejection paths. It verifies that inherited `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_API_KEY`, `CLOUDFLARE_EMAIL`, and `CLOUDFLARE_ACCOUNT_ID` values are not passed to Wrangler; the installer host receives only unauthenticated GET template/health requests; the bootstrap code is stored locally with restrictive permissions; and no real Cloudflare resource is created during the test.
+- These tests improve local safety verification but do not prove real Cloudflare OAuth approval, D1 creation, or external `workers.dev` reachability. Those live tests remain release blockers.

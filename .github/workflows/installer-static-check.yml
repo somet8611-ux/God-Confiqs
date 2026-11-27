@@ -31,5 +31,7 @@ jobs:
         run: node --input-type=module --check < installer/templates/customer-worker.js
       - name: Run security invariants
         run: node installer/tests/static-check.mjs
+      - name: Run installer CLI integration tests
+        run: node installer/tests/installer-cli.integration.mjs
       - name: Run customer Worker integration tests
         run: node installer/tests/customer-worker.integration.mjs
