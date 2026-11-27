@@ -110,7 +110,7 @@ try {
 
   const success = makeCase(accountId + "\nYES\n");
   assert.equal(success.result.status, 0, success.result.stdout + "\n" + success.result.stderr);
-  const commands = success.wranglerRows.map((row) => row.args.slice(2, 4).join(" "));
+  const commands = success.wranglerRows.map((row) => row.args[2] === "d1" ? row.args.slice(2, 4).join(" ") : row.args[2]);
   assert.ok(commands.includes("--version"), "Wrangler version check should run");
   assert.ok(commands.includes("login"), "OAuth device login should run");
   assert.ok(commands.includes("whoami"), "OAuth identity and keyring check should run");
