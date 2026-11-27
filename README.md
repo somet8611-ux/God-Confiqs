@@ -10,8 +10,8 @@ GOD CONFIQS is being developed around Cloudflare Workers and D1, with a separate
 
 | Resource | What it is |
 |---|---|
-| [Open the installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install) | Create a dedicated customer panel in your Cloudflare account |
-| [Open the customer portal](https://god-confiqs-fixed.zeus-n73k47.workers.dev/portal) | Installer portal |
+| [Open the independent installer preview](https://god-confiqs-installer.zeus-n73k47.workers.dev/) | Wrangler OAuth Device Flow installer; desktop CLI preview only |
+| [Installer source and security review](https://github.com/somet8611-ux/God-Confiqs/tree/installer-hardening-2026-11-27/installer) | Current preview source; not a production release |
 | [Mini App prototype](miniapp/index.html) | Telegram/web interface source |
 | [Android APK download](https://github.com/somet8611-ux/God-Confiqs/actions/runs/45233825604/artifacts/14848776864) | Download the current Android debug-build ZIP |
 | [Android build workflow](https://github.com/somet8611-ux/God-Confiqs/actions/workflows/android-apk.yml) | Build history and latest APK artifact |
@@ -49,9 +49,9 @@ These are product goals, not a claim that every feature is already available.
 
 | Component / feature | Status |
 |---|---|
-| Main installer and customer Worker provisioning | Implemented; test with a controlled Cloudflare account before production use |
-| Dedicated customer Worker and D1 database | Installer's intended provisioning architecture |
-| Customer panel initial setup | Available in the customer Worker flow; verify in the target account |
+| Independent installer preview | Available on workers.dev; desktop CLI preview, not production-ready |
+| Dedicated customer Worker and D1 database | Provisioning code is implemented; fresh-account end-to-end test is pending |
+| Customer panel initial setup | One-time first-admin bootstrap prototype; full VLESS management is incomplete |
 | Mini App navigation and dashboard UI | Front-end prototype |
 | Mini App demo records | Stored in browser `localStorage` only |
 | Persian, English, and Arabic Mini App labels | Present in prototype |
@@ -70,33 +70,33 @@ The installer is designed to create a dedicated customer Worker and D1 database 
 
 ### Before you start
 
-- A Cloudflare account.
-- Permission to create and manage Workers and D1 resources in that account.
-- A narrowly scoped Cloudflare API token with the permissions listed below.
+- A Cloudflare account you own and control.
+- A Windows, macOS, or Linux computer with Node.js 20 or newer.
+- Permission to create Workers (Workers product Admin) and create D1 databases.
+- An enabled Cloudflare `workers.dev` subdomain for the selected account.
+- A phone or computer browser to approve Wrangler's device code. The phone can approve the code but cannot run this CLI installer by itself.
 
 ### Installation steps
 
-1. Open the [GOD CONFIQS Installer](https://god-confiqs-fixed.zeus-n73k47.workers.dev/install).
-2. Select **Create pre-configured token**. Cloudflare opens its API Token page with the requested permissions filled in.
-3. Review the permissions and account scope, create the token, and copy it.
-4. Return to the installer, paste the token, and select **Verify token & load accounts**.
-5. Select the Cloudflare account where you want your panel.
-6. Select **Create my dedicated panel**.
-7. Wait while the installer creates the D1 database, initializes its tables, uploads the customer Worker, and enables its `workers.dev` address.
-8. Save the panel URL and open it to complete the initial setup.
+1. Open the [GOD CONFIQS Installer preview](https://god-confiqs-installer.zeus-n73k47.workers.dev/).
+2. Download `god-confiqs-installer.mjs`.
+3. Open a terminal in the download folder and run `node god-confiqs-installer.mjs`.
+4. Wrangler displays a Cloudflare Device Authorization code. Open the official Cloudflare verification page and review the permissions shown there before approving.
+5. Select the intended account (if prompted) and type `YES` only after reviewing the account and broad permissions.
+6. The CLI creates uniquely named new Worker and D1 resources, applies the schema, adds the D1 binding, deploys to `workers.dev`, and checks the panel's `/health` endpoint.
+7. Keep the one-time first-admin code in the local `.bootstrap-code` file private. Delete it after the first administrator account is created.
 
-The result depends on the selected Cloudflare account, token permissions, and account-level Workers configuration. The account's `workers.dev` subdomain may need to be enabled in Cloudflare.
+The website never asks for an API Token or Cloudflare password. Do not paste tokens into the installer or send them to anyone.
 
-### Required Cloudflare token permissions
+### Authorization model and limitations
 
-| Permission | Purpose |
-|---|---|
-| Workers Scripts — Edit | Upload and manage the dedicated customer Worker |
-| D1 — Edit | Create and initialize the customer's database |
-| Memberships — Read | Read the Cloudflare account memberships available to the token |
+The installer uses Wrangler's built-in OAuth Device Authorization Grant. Credentials are stored by Wrangler in the operating system keychain/credential store through `--use-keyring`. The CLI also strips inherited Cloudflare API-token/key/email and account-ID environment overrides before invoking Wrangler.
 
-Restrict the token to the intended account wherever possible. Treat it like a password and revoke it when it is no longer needed.
+Requested scopes are `account:read`, `user:read`, `workers:write`, `workers_scripts:write`, and `d1:write`; Wrangler adds `offline_access` for token refresh. Wrangler OAuth does **not** currently support granular resource authorization. Creating a new Worker requires Workers product Admin access, and the D1 write scope is not limited to one database. This is broad account/product access, not a per-resource grant. The installer is designed to create only new randomly named resources and has no delete/overwrite path, but that application safeguard is not a Cloudflare permission boundary.
 
+Wrangler's `whoami` command confirms the OAuth token type and encrypted credential storage; it does not return the granted scope list. The Cloudflare consent screen is the authoritative place to review permissions. Cancel if the displayed access is broader than you accept.
+
+This is a desktop CLI preview, not a browser-only or phone-only installer. Public OAuth for GOD CONFIQS has not been approved or implemented. Do not use this preview with real customer data until the external-account, authorization, registration, isolation, deployment, and generated-link tests pass.
 ## Architecture
 
 | File / service | Responsibility |
@@ -210,6 +210,7 @@ The mobile app is a separate development track. It does not connect to or modify
 ## Security
 
 - Treat Cloudflare API tokens, Appwrite server keys, bot tokens, passwords, and private keys as secrets. Never commit them to GitHub.
+- The current installer preview does not collect or store Cloudflare API tokens; it uses Wrangler Device OAuth and the OS keyring. Its OAuth permissions are broad and must be reviewed directly on Cloudflare's consent screen.
 - Use a narrowly scoped Cloudflare token and revoke it when it is no longer needed.
 - Do not place server API keys in mobile-app code or `EXPO_PUBLIC_` environment variables.
 - Do not store real credentials or sensitive customer data in the current Mini App prototype.
@@ -217,18 +218,20 @@ The mobile app is a separate development track. It does not connect to or modify
 - Use short-lived, single-use pairing codes for a future Telegram pairing flow.
 - Enforce tenant authorization on the server for every customer API request. Hiding another customer's data in the UI is not sufficient.
 
-The installer uses the submitted Cloudflare token to make provisioning requests; it is not intended to become a permanently stored customer credential.
+The installer does not receive or store a submitted Cloudflare API token. Wrangler performs OAuth locally and keeps credentials in the OS keyring. The installer preview still needs fresh-account end-to-end testing and is not production-ready.
 
 ## Troubleshooting
 
-**The installer says the Cloudflare token is invalid or inactive**
-- Create a fresh token using the installer's pre-configured token link.
-- Check that it was copied completely and has not expired or been revoked.
-- Confirm that the required permissions are present.
+**Wrangler cannot store credentials securely**
+- On Linux, install the supported `secret-tool` / libsecret keyring dependency and retry.
+- On macOS, allow access to the system Keychain. On Windows, allow Wrangler to install its small Credential Manager binding.
 
-**No Cloudflare account appears**
-- Confirm that your Cloudflare user has access to an account.
-- Check that the token's account scope includes the intended account.
+**The device code expires**
+- Run the installer again and approve the new code within the five-minute window.
+
+**Cloudflare reports insufficient permissions**
+- Review the requested scopes on the Cloudflare consent screen.
+- Creating a new Worker requires Workers product Admin access, and D1 creation requires D1 write access. Cancel if you do not accept the breadth of access.
 
 **The customer Worker address cannot be enabled**
 - Open the Cloudflare dashboard for the selected account.
