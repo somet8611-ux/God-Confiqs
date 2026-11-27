@@ -32,6 +32,10 @@ The user reviews and approves the request directly at Cloudflare. Wrangler store
 
 Cloudflare documents this device flow and `--use-keyring` in [Wrangler general commands](https://developers.cloudflare.com/workers/wrangler/commands/general/).
 
+### Why browser-only public OAuth is not enabled
+
+Cloudflare's self-managed third-party OAuth clients support Authorization Code (with PKCE for browser/public clients), but not Device Authorization. A public client also requires a verified client URL domain; Cloudflare verifies ownership through a DNS TXT record. This project currently uses only a `workers.dev` hostname and cannot publish a TXT record in that DNS zone. Therefore a public browser-only OAuth client cannot be enabled yet without a domain whose DNS we control. The supported no-domain alternative is the Cloudflare-owned Wrangler Device Flow run locally with OS-keyring storage. See [Create your OAuth client](https://developers.cloudflare.com/fundamentals/oauth/create-an-oauth-client/) and [Wrangler login](https://developers.cloudflare.com/workers/wrangler/commands/general/).
+
 **Important permission limitation:** Cloudflare's [Workers authorization documentation](https://developers.cloudflare.com/workers/authorization/) says Wrangler's OAuth login does not currently support granular authorization. Creating a new Worker requires the Workers product Admin role. Therefore the OAuth grant must be treated as broad account/product access, not a grant limited to one new Worker or one D1 database. The landing page discloses broad Workers/D1 permissions; users must understand and explicitly accept them. Wrangler's `whoami` output does not expose the granted scope list; the Cloudflare consent screen is the authoritative review. The proposed 0.2.7 CLI checks that the active identity is an OAuth token and that credentials are stored in the encrypted OS keyring, but it does not claim to independently verify the granted scope list.
 
 ## Local requirements and flow
