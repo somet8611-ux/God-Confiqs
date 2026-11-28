@@ -60,3 +60,13 @@ Do not use this preview for real customer data until the end-to-end authorizatio
 ## Automated installer checks
 
 The GitHub Actions workflow runs static source/security checks, customer Worker integration tests against isolated in-memory D1 databases, and a mocked CLI integration suite. The CLI suite verifies OAuth-only acceptance, encrypted-keyring confirmation, removal of inherited API credential overrides, explicit cancellation, Account ID validation, D1 binding creation, single- or multi-label `workers.dev` URL parsing, health-check handling, and private local bootstrap-code output. It mocks Wrangler and HTTP responses; it does not replace the still-required live test on a separate Cloudflare account.
+
+
+## 28 November 2026 — v0.2.7 staging version uploaded
+
+- Uploaded the 0.2.7 Worker source as Cloudflare Worker version **13** (62f96f79-aab2-43cc-8219-45869508bb00) from commit 1c3ef531fe2b3dcc59551f106f6258f394b1aa04.
+- Created the public version alias staging: https://staging-god-confiqs-installer.zeus-n73k47.workers.dev/
+- Enabled Version URLs for the installer Worker only. Its current bindings remain empty.
+- **The production/root route was not promoted:** Cloudflare still reports version 11 (v0.2.6.1) at 100% traffic. Version 13 is a staging URL only.
+- The version URL uses the installer's existing Worker configuration/resources; it is not an isolated Cloudflare account or separate environment.
+- The verification environment could not resolve/fetch the public workers.dev host. Open /health and / in an external browser before promoting the version. Do not treat this preview as production-ready.
