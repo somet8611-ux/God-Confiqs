@@ -76,3 +76,13 @@ The proposed 0.2.7 changes are on a separate branch and are **not deployed yet**
 - The current installer has only a `workers.dev` hostname, whose DNS zone is not controlled by this project. Without a domain and DNS zone the project can verify, the public browser-only OAuth route is blocked. Do not claim public OAuth is available.
 - The implemented alternative is Cloudflare's own Wrangler Device Authorization Grant, executed locally with `--use-keyring`. It avoids exposing tokens to the installer but requires a computer/Node.js and grants broad, non-resource-granular permissions. The consent screen remains authoritative.
 - References: https://developers.cloudflare.com/fundamentals/oauth/create-an-oauth-client/ and https://developers.cloudflare.com/workers/wrangler/commands/general/.
+
+
+## 28 November 2026 — staging upload and account-state recheck
+
+- Uploaded the branch's v0.2.7 Worker as version 13, ID 62f96f79-aab2-43cc-8219-45869508bb00, with the staging alias. The alias is https://staging-god-confiqs-installer.zeus-n73k47.workers.dev/.
+- Enabled Version URLs on god-confiqs-installer only. The Worker still has **zero bindings**.
+- The active production deployment remains version 11 (v0.2.6.1) at 100%; version 13 has not been promoted. The prior version 11 deployment remains available for rollback.
+- Rechecked the protected Workers after staging: god-confiqs, god-confiqs-fixed, and vless-admin-panel retain their previous modified timestamps and script etags. The PANEL_BACKEND service binding on god-confiqs-fixed still targets vless-admin-panel; its existing D1 bindings are unchanged.
+- Requeried the old god-confiqs-tenants database: the inspected accounts, sessions, customers, workspaces, customer sessions, tenant users, proxies, settings, and recovery-code tables each contain zero rows. Its earlier schema is present, but the new installer does not use it.
+- External HTTP requests to the root and staging workers.dev hosts could not be resolved from this verification environment. Therefore, the staging URL, health response, and browser rendering remain unverified here. No live second-account installation was attempted.
